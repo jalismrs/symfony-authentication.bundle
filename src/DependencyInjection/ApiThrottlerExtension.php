@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace Jalismrs\ApiThrottlerBundle\DependencyInjection;
+namespace Jalismrs\AuthenticationBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -9,11 +9,11 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
 
 /**
- * Class ApiThrottlerExtension
+ * Class AuthenticationExtension
  *
- * @package Jalismrs\ApiThrottlerBundle\DependencyInjection
+ * @package Jalismrs\AuthenticationBundle\DependencyInjection
  */
-class ApiThrottlerExtension extends
+class AuthenticationExtension extends
     Extension
 {
     /**
@@ -33,12 +33,12 @@ class ApiThrottlerExtension extends
         $fileLocator = new FileLocator(
             __DIR__.'/../Resources/config'
         );
-        
+
         $yamlFileLoader = new YamlFileLoader(
             $container,
             $fileLocator
         );
-    
+
         $yamlFileLoader->load('services.yaml');
     }
 }

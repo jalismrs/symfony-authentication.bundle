@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Tests;
 
-use Jalismrs\ApiThrottlerBundle\ApiThrottler;
+use Jalismrs\AuthenticationBundle\Authentication;
 use Maba\GentleForce\Exception\RateLimitReachedException;
 use Maba\GentleForce\RateLimitProvider;
 use Maba\GentleForce\ThrottlerInterface;
@@ -12,13 +12,13 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 /**
- * Class ApiThrottlerTest
+ * Class AuthenticationTest
  *
  * @package Tests
  *
- * @covers  \Jalismrs\ApiThrottlerBundle\ApiThrottler
+ * @covers  \Jalismrs\AuthenticationBundle\Authentication
  */
-final class ApiThrottlerTest extends
+final class AuthenticationTest extends
     TestCase
 {
     /**
@@ -33,7 +33,7 @@ final class ApiThrottlerTest extends
      * @var \Maba\GentleForce\ThrottlerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private MockObject $mockThrottler;
-    
+
     /**
      * testRegisterRateLimits
      *
@@ -45,38 +45,38 @@ final class ApiThrottlerTest extends
     {
         // arrange
         $systemUnderTest = $this->createSUT();
-        
+
         $rateLimits = [];
-        
+
         // expect
         $this->mockRateLimitProvider
             ->expects(self::once())
             ->method('registerRateLimits')
             ->with(
-                self::equalTo(ApiThrottlerProvider::USE_CASE_KEY),
+                self::equalTo(AuthenticationProvider::USE_CASE_KEY),
                 self::equalTo($rateLimits)
             );
-        
+
         // act
         $systemUnderTest->registerRateLimits(
-            ApiThrottlerProvider::USE_CASE_KEY,
+            AuthenticationProvider::USE_CASE_KEY,
             $rateLimits
         );
     }
-    
+
     /**
      * createSUT
      *
-     * @return \Jalismrs\ApiThrottlerBundle\ApiThrottler
+     * @return \Jalismrs\AuthenticationBundle\Authentication
      */
-    private function createSUT() : ApiThrottler
+    private function createSUT() : Authentication
     {
-        return new ApiThrottler(
+        return new Authentication(
             $this->mockRateLimitProvider,
             $this->mockThrottler,
         );
     }
-    
+
     /**
      * testWaitAndIncrease
      *
@@ -89,14 +89,14 @@ final class ApiThrottlerTest extends
     {
         // arrange
         $systemUnderTest = $this->createSUT();
-        
+
         // expect
         $this->mockThrottler
             ->expects(self::exactly(2))
             ->method('checkAndIncrease')
             ->with(
-                self::equalTo(ApiThrottlerProvider::USE_CASE_KEY),
-                self::equalTo(ApiThrottlerProvider::IDENTIFIER)
+                self::equalTo(AuthenticationProvider::USE_CASE_KEY),
+                self::equalTo(AuthenticationProvider::IDENTIFIER)
             )
             ->willReturnOnConsecutiveCalls(
                 self::throwException(
@@ -107,14 +107,14 @@ final class ApiThrottlerTest extends
                 ),
                 null
             );
-        
+
         // act
         $systemUnderTest->waitAndIncrease(
-            ApiThrottlerProvider::USE_CASE_KEY,
-            ApiThrottlerProvider::IDENTIFIER
+            AuthenticationProvider::USE_CASE_KEY,
+            AuthenticationProvider::IDENTIFIER
         );
     }
-    
+
     /**
      * testWaitAndIncreaseThrowsRateLimitReachedException
      *
@@ -127,7 +127,7 @@ final class ApiThrottlerTest extends
     {
         // arrange
         $systemUnderTest = $this->createSUT();
-        
+
         // expect
         $this->expectException(TooManyRequestsHttpException::class);
         $this->expectExceptionMessage('Loop limit was reached');
@@ -135,8 +135,8 @@ final class ApiThrottlerTest extends
             ->expects(self::once())
             ->method('checkAndIncrease')
             ->with(
-                self::equalTo(ApiThrottlerProvider::USE_CASE_KEY),
-                self::equalTo(ApiThrottlerProvider::IDENTIFIER)
+                self::equalTo(AuthenticationProvider::USE_CASE_KEY),
+                self::equalTo(AuthenticationProvider::IDENTIFIER)
             )
             ->willThrowException(
                 new RateLimitReachedException(
@@ -144,15 +144,15 @@ final class ApiThrottlerTest extends
                     'Rate limit was reached'
                 )
             );
-        
+
         // act
         $systemUnderTest->setCap(1);
         $systemUnderTest->waitAndIncrease(
-            ApiThrottlerProvider::USE_CASE_KEY,
-            ApiThrottlerProvider::IDENTIFIER
+            AuthenticationProvider::USE_CASE_KEY,
+            AuthenticationProvider::IDENTIFIER
         );
     }
-    
+
     /**
      * testDecrease
      *
@@ -164,23 +164,23 @@ final class ApiThrottlerTest extends
     {
         // arrange
         $systemUnderTest = $this->createSUT();
-        
+
         // expect
         $this->mockThrottler
             ->expects(self::once())
             ->method('decrease')
             ->with(
-                self::equalTo(ApiThrottlerProvider::USE_CASE_KEY),
-                self::equalTo(ApiThrottlerProvider::IDENTIFIER)
+                self::equalTo(AuthenticationProvider::USE_CASE_KEY),
+                self::equalTo(AuthenticationProvider::IDENTIFIER)
             );
-        
+
         // act
         $systemUnderTest->decrease(
-            ApiThrottlerProvider::USE_CASE_KEY,
-            ApiThrottlerProvider::IDENTIFIER
+            AuthenticationProvider::USE_CASE_KEY,
+            AuthenticationProvider::IDENTIFIER
         );
     }
-    
+
     /**
      * testReset
      *
@@ -192,23 +192,23 @@ final class ApiThrottlerTest extends
     {
         // arrange
         $systemUnderTest = $this->createSUT();
-        
+
         // expect
         $this->mockThrottler
             ->expects(self::once())
             ->method('reset')
             ->with(
-                self::equalTo(ApiThrottlerProvider::USE_CASE_KEY),
-                self::equalTo(ApiThrottlerProvider::IDENTIFIER)
+                self::equalTo(AuthenticationProvider::USE_CASE_KEY),
+                self::equalTo(AuthenticationProvider::IDENTIFIER)
             );
-        
+
         // act
         $systemUnderTest->reset(
-            ApiThrottlerProvider::USE_CASE_KEY,
-            ApiThrottlerProvider::IDENTIFIER
+            AuthenticationProvider::USE_CASE_KEY,
+            AuthenticationProvider::IDENTIFIER
         );
     }
-    
+
     /**
      * setUp
      *
@@ -217,7 +217,7 @@ final class ApiThrottlerTest extends
     protected function setUp() : void
     {
         parent::setUp();
-        
+
         $this->mockRateLimitProvider = $this->createMock(RateLimitProvider::class);
         $this->mockThrottler         = $this->createMock(ThrottlerInterface::class);
     }

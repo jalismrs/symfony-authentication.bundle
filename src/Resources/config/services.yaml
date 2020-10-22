@@ -1,15 +1,15 @@
 services:
     _defaults:
         public: false
-    
-    api_throttler.api_throttler:
-        class: 'Jalismrs\ApiThrottlerBundle\ApiThrottler'
+
+    authentication.authentication:
+        class: 'Jalismrs\AuthenticationBundle\Authentication'
         arguments:
             $rateLimitProvider: '@Maba\GentleForce\RateLimitProvider'
             $throttler: '@Maba\GentleForce\ThrottlerInterface'
-    
-    Jalismrs\ApiThrottlerBundle\ApiThrottler: '@api_throttler.api_throttler'
-    
+
+    Jalismrs\AuthenticationBundle\Authentication: '@authentication.authentication'
+
     # maba/gentle-force
     Maba\GentleForce\RateLimitProvider:
         autowire: true
@@ -19,7 +19,7 @@ services:
             $rateLimitProvider: '@Maba\GentleForce\RateLimitProvider'
             $prefix: 'rate_limit::'
     Maba\GentleForce\ThrottlerInterface: '@Maba\GentleForce\Throttler'
-    
+
     # predis/predis
     Predis\Client:
         arguments:
