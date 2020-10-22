@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace Jalismrs\ApiThrottlerBundle;
+namespace Jalismrs\AuthenticationBundle;
 
 use Maba\GentleForce\Exception\RateLimitReachedException;
 use Maba\GentleForce\RateLimitProvider;
@@ -11,11 +11,11 @@ use function random_int;
 use function usleep;
 
 /**
- * Class ApiThrottler
+ * Class Authentication
  *
- * @package Jalismrs\ApiThrottlerBundle
+ * @package Jalismrs\AuthenticationBundle
  */
-class ApiThrottler
+class Authentication
 {
     /**
      * cap
@@ -23,7 +23,7 @@ class ApiThrottler
      * @var int
      */
     private int $cap = -1;
-    
+
     /**
      * rateLimitProvider
      *
@@ -36,9 +36,9 @@ class ApiThrottler
      * @var \Maba\GentleForce\Throttler|\Maba\GentleForce\ThrottlerInterface
      */
     private ThrottlerInterface $throttler;
-    
+
     /**
-     * ApiThrottler constructor.
+     * Authentication constructor.
      *
      * @param \Maba\GentleForce\RateLimitProvider  $rateLimitProvider
      * @param \Maba\GentleForce\ThrottlerInterface $throttler
@@ -50,7 +50,7 @@ class ApiThrottler
         $this->rateLimitProvider = $rateLimitProvider;
         $this->throttler         = $throttler;
     }
-    
+
     /**
      * setCap
      *
@@ -63,7 +63,7 @@ class ApiThrottler
     ) : void {
         $this->cap = $cap;
     }
-    
+
     /**
      * registerRateLimits
      *
@@ -81,7 +81,7 @@ class ApiThrottler
             $rateLimits
         );
     }
-    
+
     /**
      * waitAndIncrease
      *
@@ -110,9 +110,9 @@ class ApiThrottler
                     100,
                     1000
                 );
-                
+
                 $waitInSeconds = (int)$rateLimitReachedException->getWaitForInSeconds();
-                
+
                 ++$loop;
                 if ($loop === $this->cap) {
                     throw new TooManyRequestsHttpException(
@@ -125,7 +125,7 @@ class ApiThrottler
             }
         }
     }
-    
+
     /**
      * decrease
      *
@@ -143,7 +143,7 @@ class ApiThrottler
             $identifier
         );
     }
-    
+
     /**
      * reset
      *

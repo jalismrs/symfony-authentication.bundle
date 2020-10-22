@@ -1,16 +1,16 @@
 <?php
 declare(strict_types = 1);
 
-namespace Jalismrs\ApiThrottlerBundle;
+namespace Jalismrs\AuthenticationBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * Class ApiThrottlerBundle
+ * Class AuthenticationBundle
  *
- * @package Jalismrs\ApiThrottlerBundle
+ * @package Jalismrs\AuthenticationBundle
  */
-class ApiThrottlerBundle extends
+class AuthenticationBundle extends
     Bundle
 {
 
