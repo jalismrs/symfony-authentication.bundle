@@ -1,29 +1,38 @@
 services:
     _defaults:
         public: false
-
-    authentication.authentication:
-        class: 'Jalismrs\AuthenticationBundle\Authentication'
+    
+    authentication.user_service:
+        class: 'Jalismrs\AuthenticationBundle\UserService'
         arguments:
-            $rateLimitProvider: '@Maba\GentleForce\RateLimitProvider'
-            $throttler: '@Maba\GentleForce\ThrottlerInterface'
-
-    Jalismrs\AuthenticationBundle\Authentication: '@authentication.authentication'
-
-    # maba/gentle-force
-    Maba\GentleForce\RateLimitProvider:
+            $stalactiteService: '@authentication.stalactite_service'
+    
+    Jalismrs\AuthenticationBundle\UserService: '@authentication.user_service'
+    
+    authentication.stalactite_service:
+        class: 'Jalismrs\AuthenticationBundle\StalactiteService'
+        arguments:
+            $clientApp: '@Jalismrs\Stalactite\Client\Authentication\Model\ClientApp'
+            $parser: '@Lcobucci\JWT\Parser'
+            $service: '@Jalismrs\Stalactite\Client\Service'
+    
+    Jalismrs\AuthenticationBundle\StalactiteService: '@authentication.stalactite_service'
+    
+    authentication.is_authenticated_controller_middleware:
+        class: 'Jalismrs\AuthenticationBundle\IsAuthenticatedControllerMiddleware'
+        arguments:
+            $userService: '@authentication.user_service'
+    
+    # lcobucci/jwt
+    Lcobucci\JWT\Parser:
         autowire: true
-    Maba\GentleForce\Throttler:
+    
+    # jalismrs/stalactite-api.client
+    Jalismrs\Stalactite\Client\Client:
         arguments:
-            $client: '@Predis\Client'
-            $rateLimitProvider: '@Maba\GentleForce\RateLimitProvider'
-            $prefix: 'rate_limit::'
-    Maba\GentleForce\ThrottlerInterface: '@Maba\GentleForce\Throttler'
-
-    # predis/predis
-    Predis\Client:
+            $host: '%env(STALACTITE_URL)%'
+    Jalismrs\Stalactite\Client\Service:
         arguments:
-            $parameters:
-                host: '%env(REDIS_HOST)%'
-            $options:
-                prefix: '%app.name%::'
+            $client: '@Jalismrs\Stalactite\Client\Client'
+    Jalismrs\Stalactite\Client\Authentication\Model\ClientApp:
+        autowire: true
