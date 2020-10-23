@@ -1,6 +1,7 @@
 services:
     _defaults:
-        public: false
+        autowire: true
+        autoconfigure: true
     
     authentication.user_service:
         class: 'Jalismrs\AuthenticationBundle\UserService'
