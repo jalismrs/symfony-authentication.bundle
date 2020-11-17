@@ -54,17 +54,17 @@ class StalactiteService
      * StalactiteService constructor.
      *
      * @param \Jalismrs\Stalactite\Client\Authentication\Model\ClientApp $clientApp
-     * @param \Psr\Log\LoggerInterface                                   $authLogger
+     * @param \Psr\Log\LoggerInterface                                   $logger
      * @param \Lcobucci\JWT\Parser                                       $parser
      * @param \Jalismrs\Stalactite\Client\Service                        $service
      */
     public function __construct(
         ClientApp $clientApp,
-        LoggerInterface $authLogger,
+        LoggerInterface $logger,
         Parser $parser,
         Service $service
     ) {
-        $this->logger    = $authLogger;
+        $this->logger    = $logger;
         $this->parser    = $parser;
         $this->service   = $service;
         $this->clientApp = $clientApp;

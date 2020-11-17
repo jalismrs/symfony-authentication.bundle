@@ -15,7 +15,7 @@ services:
                   $container: '@Psr\Container\ContainerInterface'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\Controller\AuthenticationController'
         tags:
-            - 'controller.service_arguments'
+            - name: 'controller.service_arguments'
 
     jalismrs_authentication.user_controller:
         arguments:
@@ -25,7 +25,7 @@ services:
                   $container: '@Psr\Container\ContainerInterface'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\Controller\UserController'
         tags:
-            - 'controller.service_arguments'
+            - name: 'controller.service_arguments'
 
     # event-subscribers
     jalismrs_authentication.get_jwt_request_middleware:
@@ -41,7 +41,10 @@ services:
             $clientApp: '@Jalismrs\Stalactite\Client\Authentication\Model\ClientApp'
             $parser: '@Lcobucci\JWT\Parser'
             $service: '@Jalismrs\Stalactite\Client\Service'
-
+        tags:
+            - name: 'monolog.logger'
+              channel: 'authentication'
+            
     jalismrs_authentication.user_service:
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService'
         arguments:
