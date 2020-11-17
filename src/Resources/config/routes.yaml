@@ -1,5 +1,4 @@
-api:
-    name_prefix: 'authentication_'
-    prefix: '/authentication'
-    resource: 'routing/authentication.yaml'
+jalismrs_authentication:
+    name_prefix: 'jalismrs_authentication_'
+    resource: 'routing/api.yaml'
     trailing_slash_on_root: false
