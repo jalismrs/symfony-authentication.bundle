@@ -119,22 +119,39 @@ class StalactiteService
         Response $response
     ) : void {
         if (!$response->isSuccessful()) {
-            $body = $response->getBody();
+            $error = self::getError($response);
             
-            if ($body instanceof ApiError) {
-                $message = $body->getMessage();
-            } elseif (is_string($body)) {
-                $message = $body;
-            } else {
-                $message = self::UNKNOWN_ERROR;
-            }
-            $this->logger->critical($message);
+            $this->logger->critical($error);
             
             throw new StalactiteException(
-                $message,
-                $response->getCode()
+                $error,
             );
         }
+    }
+    
+    /**
+     * getError
+     *
+     * @static
+     *
+     * @param \Jalismrs\Stalactite\Client\Util\Response $response
+     *
+     * @return string
+     */
+    private static function getError(
+        Response $response
+    ) : string {
+        $body = $response->getBody();
+    
+        if ($body instanceof ApiError) {
+            $error = $body;
+        } elseif (is_string($body)) {
+            $error = $body;
+        } else {
+            $error = self::UNKNOWN_ERROR;
+        }
+        
+        return $error;
     }
     
     /**
@@ -299,11 +316,19 @@ class StalactiteService
     ) : bool {
         $token = $this->parseJwt($jwt);
         
-        return $this
+        $response = $this
             ->service
             ->authentication()
             ->tokens()
-            ->validate($token)
-            ->isSuccessful();
+            ->validate($token);
+        
+        $isSuccessful = $response->isSuccessful();
+        if (!$isSuccessful) {
+            $error = self::getError($response);
+            
+            $this->logger->error($error);
+        }
+        
+        return $isSuccessful;
     }
 }
