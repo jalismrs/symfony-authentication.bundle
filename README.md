@@ -17,3 +17,10 @@ jalismrs_authentication:
     application: 'stalactite_name'
     url: 'stalactite_url'
 ```
+```yaml
+# config/routes.yaml
+
+_authentication:
+    resource: '@JalismrsAuthenticationBundle/Resources/config/routes.yaml'
+    trailing_slash_on_root: false
+```
