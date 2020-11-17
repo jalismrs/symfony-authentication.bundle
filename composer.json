@@ -35,9 +35,13 @@
     "jalismrs/symfony.common.helpers.event" : "^1.0.0",
     "jalismrs/common.exception" : "^1.0.0",
     "lcobucci/jwt" : "^3.3.3",
+    "psr/log" : "^1.1.3",
     "symfony/config" : "^5.0",
     "symfony/http-kernel" : "^5.0",
     "symfony/dependency-injection": "^5.0"
+  },
+  "suggest" : {
+    "symfony/monolog-bundle" : "Adds monolog integration"
   },
   "support" : {
     "email" : "dev@jalis.fr",
