@@ -30,6 +30,8 @@
   "require" : {
     "php" : "^7.4",
     "jalismrs/stalactite-api.client" : "^0.12.2",
+    "jalismrs/symfony.bundle.middleware.api" : "^1.0.0",
+    "jalismrs/symfony.common.controller" : "^1.0.0",
     "jalismrs/symfony.common.helpers.event" : "^1.0.0",
     "jalismrs/common.exception" : "^1.0.0",
     "lcobucci/jwt" : "^3.3.3",

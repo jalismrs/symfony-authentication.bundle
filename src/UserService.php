@@ -4,8 +4,10 @@ declare(strict_types = 1);
 namespace Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle;
 
 use Jalismrs\Stalactite\Client\Data\Model\User as StalactiteUser;
+use Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\EventSubscriber\GetJwtRequestMiddleware;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use UnexpectedValueException;
+use function vsprintf;
 
 /**
  * Class UserService
@@ -94,8 +96,15 @@ class UserService
     public function getJwt() : string
     {
         if ($this->jwt === null) {
+            $message = vsprintf(
+                'JWT must be provided with header %s',
+                [
+                    GetJwtRequestMiddleware::HEADER_NAME,
+                ],
+            );
+            
             throw new UnexpectedValueException(
-                'Should not be null at this point'
+                $message,
             );
         }
         
@@ -151,11 +160,11 @@ class UserService
     public function fetchUser() : ?User
     {
         if ($this->user === null) {
-            $stalactiteUser = $this->fetchStalactiteUser();
+            $jwt = $this->getJwt();
             
-            $this->user = $this->createUser(
-                $stalactiteUser
-            );
+            $stalactiteUser = $this->fetchStalactiteUser($jwt);
+            
+            $this->user = $this->createUser($stalactiteUser);
         }
         
         return $this->user;
@@ -164,17 +173,21 @@ class UserService
     /**
      * fetchStalactiteUser
      *
+     * @param string $jwt
+     *
      * @return \Jalismrs\Stalactite\Client\Data\Model\User
      *
      * @throws \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\StalactiteException
      * @throws \Psr\SimpleCache\InvalidArgumentException
      * @throws \UnexpectedValueException
      */
-    protected function fetchStalactiteUser() : StalactiteUser
+    protected function fetchStalactiteUser(
+        string $jwt
+    ) : StalactiteUser
     {
-        $stalactiteUser  = $this->stalactiteService->getUser($this->jwt);
-        $stalactiteLeads = $this->stalactiteService->getLeads($this->jwt);
-        $stalactitePosts = $this->stalactiteService->getPosts($this->jwt);
+        $stalactiteUser  = $this->stalactiteService->getUser($jwt);
+        $stalactiteLeads = $this->stalactiteService->getLeads($jwt);
+        $stalactitePosts = $this->stalactiteService->getPosts($jwt);
         
         $stalactiteUser->setLeads($stalactiteLeads);
         $stalactiteUser->setPosts($stalactitePosts);

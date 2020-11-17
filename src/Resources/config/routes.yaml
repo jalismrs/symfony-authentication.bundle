@@ -1,0 +1,5 @@
+api:
+    name_prefix: 'authentication_'
+    prefix: '/authentication'
+    resource: 'routing/authentication.yaml'
+    trailing_slash_on_root: false
