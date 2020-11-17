@@ -51,12 +51,11 @@ class JalismrsAuthenticationExtension extends
     
         $definition = $container->getDefinition(ClientApp::class);
         
-        dd($definition->getMethodCalls());
-        
+        $definition->removeMethodCall('setName');
         $definition->addMethodCall(
             'setName',
             [
-                '$parameters' => $mergedConfig['application'],
+                '$name' => $mergedConfig['application'],
             ],
         );
     }
