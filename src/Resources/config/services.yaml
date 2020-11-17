@@ -3,6 +3,20 @@ services:
         autowire: true
         autoconfigure: true
 
+    # services
+    jalismrs_authentication.stalactite_service:
+        class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\StalactiteService'
+        arguments:
+            $clientApp: '@Jalismrs\Stalactite\Client\Authentication\Model\ClientApp'
+            $parser: '@Lcobucci\JWT\Parser'
+            $service: '@Jalismrs\Stalactite\Client\Service'
+
+    jalismrs_authentication.user_service:
+        class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService'
+        arguments:
+            $stalactiteService: '@jalismrs_authentication.stalactite_service'
+
+    # controllers
     jalismrs_authentication.authentication_controller:
         arguments:
             $userService: '%jalismrs_authentication.user_service%'
@@ -23,26 +37,17 @@ services:
         tags:
             - 'controller.service_arguments'
 
+    # event-subscribers
     jalismrs_authentication.get_jwt_request_middleware:
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\EventSubscriber\GetJwtRequestMiddleware'
 
     jalismrs_authentication.is_authenticated_controller_middleware:
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\EventSubscriber\IsAuthenticatedControllerMiddleware'
 
-    jalismrs_authentication.stalactite_service:
-        class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\StalactiteService'
-        arguments:
-            $clientApp: '@Jalismrs\Stalactite\Client\Authentication\Model\ClientApp'
-            $parser: '@Lcobucci\JWT\Parser'
-            $service: '@Jalismrs\Stalactite\Client\Service'
-
-    jalismrs_authentication.user_service:
-        class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService'
-        arguments:
-            $stalactiteService: '@jalismrs_authentication.stalactite_service'
-
+    # aliases
     Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService: '@jalismrs_authentication.user_service'
     
+    # DEPENDENCIES -------------------------------------------------------------
     # jalismrs/stalactite-api.client
     Jalismrs\Stalactite\Client\Client:
         arguments:
