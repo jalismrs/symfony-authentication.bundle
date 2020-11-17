@@ -8,8 +8,11 @@ use Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService;
 use Jalismrs\Symfony\Common\Helpers\EventHelpers;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\PreconditionRequiredHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
+use function vsprintf;
 
 /**
  * Class IsAuthenticatedControllerMiddleware
@@ -64,22 +67,35 @@ final class IsAuthenticatedControllerMiddleware implements
      *
      * @throws \Jalismrs\Stalactite\Client\Exception\ClientException
      * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
+     * @throws \UnexpectedValueException
      */
     public function onKernelController(
         ControllerEvent $controllerEvent
     ) : ControllerEvent {
         $controller = EventHelpers::getController($controllerEvent);
         
-        if (
-            $controller instanceof IsAuthenticatedControllerInterface
-            &&
-            !$this->userService->isAuthenticated()
-        ) {
-            throw new UnauthorizedHttpException(
-                '',
-                'You need to be authenticated'
-            );
+        if ($controller instanceof IsAuthenticatedControllerInterface) {
+            if (!$this->userService->hasJwt()) {
+                $message = vsprintf(
+                    'JWT must be provided with header %s',
+                    [
+                        GetJwtRequestMiddleware::HEADER_NAME,
+                    ],
+                );
+    
+                throw new BadRequestHttpException(
+                    $message
+                );
+            }
+            
+            if (!$this->userService->isAuthenticated()) {
+                throw new UnauthorizedHttpException(
+                    '',
+                    'You need to be authenticated'
+                );
+            }
         }
         
         return $controllerEvent;

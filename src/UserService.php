@@ -78,12 +78,13 @@ class UserService
      *
      * @throws \Jalismrs\Stalactite\Client\Exception\ClientException
      * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws \UnexpectedValueException
      */
     public function isAuthenticated() : bool
     {
-        return $this->jwt !== null
-            &&
-            $this->stalactiteService->validate($this->jwt);
+        $jwt = $this->getJwt();
+        
+        return $this->stalactiteService->validate($jwt);
     }
     
     /**
@@ -96,19 +97,22 @@ class UserService
     public function getJwt() : string
     {
         if ($this->jwt === null) {
-            $message = vsprintf(
-                'JWT must be provided with header %s',
-                [
-                    GetJwtRequestMiddleware::HEADER_NAME,
-                ],
-            );
-            
             throw new UnexpectedValueException(
-                $message,
+                'should not be null at this point',
             );
         }
         
         return $this->jwt;
+    }
+    
+    /**
+     * hasJwt
+     *
+     * @return bool
+     */
+    public function hasJwt() : bool
+    {
+        return $this->jwt !== null;
     }
     
     /**
