@@ -70,6 +70,6 @@ jobs:
               with:
                   file: 'var/coverage/clover.xml'
                   flags: 'php,unit'
-                  name: 'symfony.bundle.authentication'
+                  name: 'symfony.bundle.api.salesforce'
                   token: ${{ secrets.CODECOV_TOKEN }}
                   verbose: true

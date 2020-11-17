@@ -8,28 +8,31 @@
   ],
   "autoload" : {
     "psr-4" : {
-      "Jalismrs\\AuthenticationBundle\\" : "src"
+      "Jalismrs\\Symfony\\Bundle\\JalismrsAuthenticationBundle\\" : "src/"
     }
   },
   "autoload-dev" : {
     "psr-4" : {
-      "Tests\\" : "tests"
+      "Tests\\" : "tests/"
     }
   },
   "config" : {
     "sort-packages" : true
   },
   "description" : "Adds User, its services, its routes and a protected controller interface with its middleware",
-  "license": "MIT",
+  "license" : "MIT",
   "name" : "jalismrs/symfony.bundle.authentication",
   "require-dev" : {
     "composer/package-versions-deprecated" : "*",
-    "mikey179/vfsstream" : "*",
     "phpunit/phpunit" : "9.4.2",
     "roave/security-advisories" : "dev-master"
   },
   "require" : {
     "php" : "^7.4",
+    "jalismrs/stalactite-api.client" : "^0.12.2",
+    "jalismrs/symfony.common.helpers.event" : "^1.0.0",
+    "jalismrs/common.exception" : "^1.0.0",
+    "lcobucci/jwt" : "^3.3.3",
     "symfony/config" : "^5.0",
     "symfony/http-kernel" : "^5.0",
     "symfony/dependency-injection": "^5.0"

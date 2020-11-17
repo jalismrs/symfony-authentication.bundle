@@ -1,39 +1,39 @@
+parameters:
+    'salesforce_api.password': '%env(SALESFORCE_PASSWORD)%'
+    'salesforce_api.token': '%env(SALESFORCE_TOKEN)%'
+    'salesforce_api.username': '%env(SALESFORCE_USERNAME)%'
+
 services:
     _defaults:
         autowire: true
         autoconfigure: true
-    
-    authentication.user_service:
-        class: 'Jalismrs\AuthenticationBundle\UserService'
-        arguments:
-            $stalactiteService: '@authentication.stalactite_service'
-    
-    Jalismrs\AuthenticationBundle\UserService: '@authentication.user_service'
-    
-    authentication.stalactite_service:
-        class: 'Jalismrs\AuthenticationBundle\StalactiteService'
+
+    jalismrs_authentication.stalactite_service:
+        class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\StalactiteService'
         arguments:
             $clientApp: '@Jalismrs\Stalactite\Client\Authentication\Model\ClientApp'
             $parser: '@Lcobucci\JWT\Parser'
             $service: '@Jalismrs\Stalactite\Client\Service'
-    
-    Jalismrs\AuthenticationBundle\StalactiteService: '@authentication.stalactite_service'
-    
-    authentication.is_authenticated_controller_middleware:
-        class: 'Jalismrs\AuthenticationBundle\IsAuthenticatedControllerMiddleware'
+
+    jalismrs_authentication.user_service:
+        class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService'
         arguments:
-            $userService: '@authentication.user_service'
-    
-    # lcobucci/jwt
-    Lcobucci\JWT\Parser:
-        autowire: true
+            $stalactiteService: '@jalismrs_authentication.stalactite_service'
+
+    Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService: '@jalismrs_authentication.user_service'
     
     # jalismrs/stalactite-api.client
     Jalismrs\Stalactite\Client\Client:
         arguments:
-            $host: '%env(STALACTITE_URL)%'
+            $host: '%jalismrs_authentication.url%'
     Jalismrs\Stalactite\Client\Service:
         arguments:
             $client: '@Jalismrs\Stalactite\Client\Client'
     Jalismrs\Stalactite\Client\Authentication\Model\ClientApp:
+        calls:
+            - setName:
+                $name: '%jalismrs_authentication.application%'
+    
+    # lcobucci/jwt
+    Lcobucci\JWT\Parser:
         autowire: true
