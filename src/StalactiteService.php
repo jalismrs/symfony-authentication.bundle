@@ -13,13 +13,14 @@ use Jalismrs\Stalactite\Client\Util\Response;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Token;
 use Psr\Log\LoggerInterface;
+use UnexpectedValueException;
 use function is_array;
 use function is_string;
 
 /**
  * Class StalactiteService
  *
- * @package App\Auth
+ * @package Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle
  */
 class StalactiteService
 {
@@ -54,17 +55,19 @@ class StalactiteService
      * StalactiteService constructor.
      *
      * @param \Jalismrs\Stalactite\Client\Authentication\Model\ClientApp $clientApp
-     * @param \Psr\Log\LoggerInterface                                   $authLogger
+     * @param \Psr\Log\LoggerInterface                                   $logger
      * @param \Lcobucci\JWT\Parser                                       $parser
      * @param \Jalismrs\Stalactite\Client\Service                        $service
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(
         ClientApp $clientApp,
-        LoggerInterface $authLogger,
+        LoggerInterface $logger,
         Parser $parser,
         Service $service
     ) {
-        $this->logger    = $authLogger;
+        $this->logger    = $logger;
         $this->parser    = $parser;
         $this->service   = $service;
         $this->clientApp = $clientApp;
@@ -119,22 +122,39 @@ class StalactiteService
         Response $response
     ) : void {
         if (!$response->isSuccessful()) {
-            $body = $response->getBody();
+            $error = self::getError($response);
             
-            if ($body instanceof ApiError) {
-                $message = $body->getMessage();
-            } elseif (is_string($body)) {
-                $message = $body;
-            } else {
-                $message = self::UNKNOWN_ERROR;
-            }
-            $this->logger->critical($message);
+            $this->logger->critical($error);
             
             throw new StalactiteException(
-                $message,
-                $response->getCode()
+                $error,
             );
         }
+    }
+    
+    /**
+     * getError
+     *
+     * @static
+     *
+     * @param \Jalismrs\Stalactite\Client\Util\Response $response
+     *
+     * @return string
+     */
+    private static function getError(
+        Response $response
+    ) : string {
+        $body = $response->getBody();
+    
+        if ($body instanceof ApiError) {
+            $error = $body->getMessage();
+        } elseif (is_string($body)) {
+            $error = $body;
+        } else {
+            $error = self::UNKNOWN_ERROR;
+        }
+        
+        return $error;
     }
     
     /**
@@ -173,7 +193,7 @@ class StalactiteService
         
         $user = $response->getBody();
         if (!$user instanceof User) {
-            throw new \UnexpectedValueException(
+            throw new UnexpectedValueException(
                 'not an User'
             );
         }
@@ -231,7 +251,7 @@ class StalactiteService
         
         $leads = $response->getBody();
         if (!is_array($leads)) {
-            throw new \UnexpectedValueException(
+            throw new UnexpectedValueException(
                 'not an array'
             );
         }
@@ -276,7 +296,7 @@ class StalactiteService
         
         $posts = $response->getBody();
         if (!is_array($posts)) {
-            throw new \UnexpectedValueException(
+            throw new UnexpectedValueException(
                 'not an array'
             );
         }
@@ -299,11 +319,19 @@ class StalactiteService
     ) : bool {
         $token = $this->parseJwt($jwt);
         
-        return $this
+        $response = $this
             ->service
             ->authentication()
             ->tokens()
-            ->validate($token)
-            ->isSuccessful();
+            ->validate($token);
+        
+        $isSuccessful = $response->isSuccessful();
+        if (!$isSuccessful) {
+            $error = self::getError($response);
+            
+            $this->logger->error($error);
+        }
+        
+        return $isSuccessful;
     }
 }

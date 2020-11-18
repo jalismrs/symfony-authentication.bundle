@@ -21,7 +21,7 @@ class JalismrsAuthenticationExtension extends
     /**
      * loadInternal
      *
-     * @param array $mergedConfig
+     * @param array                                                   $mergedConfig
      * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
      *
      * @return void
@@ -48,15 +48,14 @@ class JalismrsAuthenticationExtension extends
             '$host',
             $mergedConfig['url']
         );
-    
+        
         $definition = $container->getDefinition(ClientApp::class);
         
-        dd($definition->getMethodCalls());
-        
+        $definition->removeMethodCall('setName');
         $definition->addMethodCall(
             'setName',
             [
-                '$parameters' => $mergedConfig['application'],
+                '$name' => $mergedConfig['application'],
             ],
         );
     }

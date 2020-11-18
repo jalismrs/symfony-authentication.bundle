@@ -9,7 +9,7 @@ use Jalismrs\Stalactite\Client\Data\Model\User as StalactiteUser;
 /**
  * Class User
  *
- * @package App\Auth
+ * @package Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle
  */
 class User
 {
@@ -24,6 +24,8 @@ class User
      * User constructor.
      *
      * @param \Jalismrs\Stalactite\Client\Data\Model\User $stalactiteUser
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(
         StalactiteUser $stalactiteUser

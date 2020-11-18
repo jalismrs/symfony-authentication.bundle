@@ -1,0 +1,9 @@
+login:
+    controller: 'jalismrs_authentication.authentication_controller::index'
+    methods: 'POST'
+    path: '/login'
+    
+user:
+    controller: 'jalismrs_authentication.user_controller::index'
+    methods: 'GET'
+    path: '/user'

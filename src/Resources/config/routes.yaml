@@ -1,0 +1,4 @@
+jalismrs_authentication:
+    name_prefix: 'jalismrs_authentication_'
+    resource: 'routing/root.yaml'
+    trailing_slash_on_root: false

@@ -4,7 +4,6 @@ declare(strict_types = 1);
 namespace Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle;
 
 use Jalismrs\Stalactite\Client\Data\Model\User as StalactiteUser;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use UnexpectedValueException;
 
 /**
@@ -36,6 +35,8 @@ class UserService
      * UserService constructor.
      *
      * @param \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\StalactiteService $stalactiteService
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(
         StalactiteService $stalactiteService
@@ -76,12 +77,13 @@ class UserService
      *
      * @throws \Jalismrs\Stalactite\Client\Exception\ClientException
      * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws \UnexpectedValueException
      */
     public function isAuthenticated() : bool
     {
-        return $this->jwt !== null
-            &&
-            $this->stalactiteService->validate($this->jwt);
+        $jwt = $this->getJwt();
+        
+        return $this->stalactiteService->validate($jwt);
     }
     
     /**
@@ -95,7 +97,7 @@ class UserService
     {
         if ($this->jwt === null) {
             throw new UnexpectedValueException(
-                'Should not be null at this point'
+                'should not be null at this point',
             );
         }
         
@@ -116,46 +118,32 @@ class UserService
     }
     
     /**
+     * hasJwt
+     *
+     * @return bool
+     */
+    public function hasJwt() : bool
+    {
+        return $this->jwt !== null;
+    }
+    
+    /**
      * getUser
      *
      * @return \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\User
      *
      * @throws \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\StalactiteException
      * @throws \Psr\SimpleCache\InvalidArgumentException
-     * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      * @throws \UnexpectedValueException
      */
     public function getUser() : User
     {
-        $user = $this->fetchUser();
-        
-        if (!$user instanceof User) {
-            throw new UnauthorizedHttpException(
-                '',
-                'you are not connected'
-            );
-        }
-        
-        return $user;
-    }
-    
-    /**
-     * fetchUser
-     *
-     * @return \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\User|null
-     *
-     * @throws \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\StalactiteException
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     * @throws \UnexpectedValueException
-     */
-    public function fetchUser() : ?User
-    {
         if ($this->user === null) {
-            $stalactiteUser = $this->fetchStalactiteUser();
+            $jwt = $this->getJwt();
             
-            $this->user = $this->createUser(
-                $stalactiteUser
-            );
+            $stalactiteUser = $this->fetchStalactiteUser($jwt);
+            
+            $this->user = $this->createUser($stalactiteUser);
         }
         
         return $this->user;
@@ -164,17 +152,20 @@ class UserService
     /**
      * fetchStalactiteUser
      *
+     * @param string $jwt
+     *
      * @return \Jalismrs\Stalactite\Client\Data\Model\User
      *
      * @throws \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\StalactiteException
      * @throws \Psr\SimpleCache\InvalidArgumentException
      * @throws \UnexpectedValueException
      */
-    protected function fetchStalactiteUser() : StalactiteUser
-    {
-        $stalactiteUser  = $this->stalactiteService->getUser($this->jwt);
-        $stalactiteLeads = $this->stalactiteService->getLeads($this->jwt);
-        $stalactitePosts = $this->stalactiteService->getPosts($this->jwt);
+    protected function fetchStalactiteUser(
+        string $jwt
+    ) : StalactiteUser {
+        $stalactiteUser  = $this->stalactiteService->getUser($jwt);
+        $stalactiteLeads = $this->stalactiteService->getLeads($jwt);
+        $stalactitePosts = $this->stalactiteService->getPosts($jwt);
         
         $stalactiteUser->setLeads($stalactiteLeads);
         $stalactiteUser->setPosts($stalactitePosts);
