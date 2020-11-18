@@ -4,9 +4,9 @@ services:
         autoconfigure: true
     
     # controllers
-    jalismrs_authentication.authentication_controller:
+    jalismrs_authentication.controller.authentication_controller:
         arguments:
-            $controllerService: '@jalismrs_authentication.authentication_controller_service'
+            $controllerService: '@jalismrs_authentication.controller_service.authentication_controller_service'
         calls:
             -   setContainer:
                     $container: '@Psr\Container\ContainerInterface'
@@ -14,9 +14,9 @@ services:
         tags:
             -   name: 'controller.service_arguments'
     
-    jalismrs_authentication.user_controller:
+    jalismrs_authentication.controller.user_controller:
         arguments:
-            $controllerService: '@jalismrs_authentication.user_controller_service'
+            $controllerService: '@jalismrs_authentication.controller_service.user_controller_service'
         calls:
             -   setContainer:
                     $container: '@Psr\Container\ContainerInterface'
@@ -25,23 +25,23 @@ services:
             -   name: 'controller.service_arguments'
     
     # controller-services
-    jalismrs_authentication.authentication_controller_service:
+    jalismrs_authentication.controller_service.authentication_controller_service:
         arguments:
             $userService: '@jalismrs_authentication.user_service'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\AuthenticationControllerService'
     
-    jalismrs_authentication.user_controller_service:
+    jalismrs_authentication.controller_service.user_controller_service:
         arguments:
             $userService: '@jalismrs_authentication.user_service'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\UserControllerService'
     
     # event-subscribers
-    jalismrs_authentication.get_jwt_request_middleware:
+    jalismrs_authentication.event_subscriber.get_jwt_request_middleware:
         arguments:
             $userService: '@jalismrs_authentication.user_service'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\EventSubscriber\GetJwtRequestMiddleware'
     
-    jalismrs_authentication.is_authenticated_controller_middleware:
+    jalismrs_authentication.event_subscriber.is_authenticated_controller_middleware:
         arguments:
             $userService: '@jalismrs_authentication.user_service'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\EventSubscriber\IsAuthenticatedControllerMiddleware'
