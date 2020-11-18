@@ -13,6 +13,7 @@ use Jalismrs\Stalactite\Client\Util\Response;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Token;
 use Psr\Log\LoggerInterface;
+use UnexpectedValueException;
 use function is_array;
 use function is_string;
 
@@ -192,7 +193,7 @@ class StalactiteService
         
         $user = $response->getBody();
         if (!$user instanceof User) {
-            throw new \UnexpectedValueException(
+            throw new UnexpectedValueException(
                 'not an User'
             );
         }
@@ -250,7 +251,7 @@ class StalactiteService
         
         $leads = $response->getBody();
         if (!is_array($leads)) {
-            throw new \UnexpectedValueException(
+            throw new UnexpectedValueException(
                 'not an array'
             );
         }
@@ -295,7 +296,7 @@ class StalactiteService
         
         $posts = $response->getBody();
         if (!is_array($posts)) {
-            throw new \UnexpectedValueException(
+            throw new UnexpectedValueException(
                 'not an array'
             );
         }

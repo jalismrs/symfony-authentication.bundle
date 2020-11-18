@@ -9,7 +9,6 @@ use Jalismrs\Symfony\Common\Helpers\EventHelpers;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\PreconditionRequiredHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use function vsprintf;
@@ -86,7 +85,7 @@ final class IsAuthenticatedControllerMiddleware implements
                         GetJwtRequestMiddleware::HEADER_NAME,
                     ],
                 );
-    
+                
                 throw new BadRequestHttpException(
                     $message
                 );
