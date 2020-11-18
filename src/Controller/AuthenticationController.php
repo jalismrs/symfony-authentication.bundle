@@ -29,14 +29,14 @@ class AuthenticationController extends
     /**
      * AuthenticationController constructor.
      *
-     * @param \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\AuthenticationControllerService $authenticationControllerService
+     * @param \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\AuthenticationControllerService $controllerService
      *
      * @codeCoverageIgnore
      */
     public function __construct(
-        AuthenticationControllerService $authenticationControllerService
+        AuthenticationControllerService $controllerService
     ) {
-        $this->controllerService = $authenticationControllerService;
+        $this->controllerService = $controllerService;
     }
     
     /**

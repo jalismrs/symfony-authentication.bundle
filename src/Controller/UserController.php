@@ -31,14 +31,14 @@ class UserController extends
     /**
      * UserController constructor.
      *
-     * @param \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\UserControllerService $userControllerService
+     * @param \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\UserControllerService $controllerService
      *
      * @codeCoverageIgnore
      */
     public function __construct(
-        UserControllerService $userControllerService
+        UserControllerService $controllerService
     ) {
-        $this->controllerService = $userControllerService;
+        $this->controllerService = $controllerService;
     }
     
     /**

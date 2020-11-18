@@ -6,7 +6,7 @@ services:
     # controllers
     jalismrs_authentication.authentication_controller:
         arguments:
-            $userService: '@jalismrs_authentication.authentication_controller_service'
+            $controllerService: '@jalismrs_authentication.authentication_controller_service'
         calls:
             - setContainer:
                   $container: '@Psr\Container\ContainerInterface'
@@ -16,7 +16,7 @@ services:
 
     jalismrs_authentication.user_controller:
         arguments:
-            $userService: '@jalismrs_authentication.user_controller_service'
+            $controllerService: '@jalismrs_authentication.user_controller_service'
         calls:
             - setContainer:
                   $container: '@Psr\Container\ContainerInterface'
