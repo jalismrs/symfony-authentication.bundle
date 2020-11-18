@@ -4,10 +4,9 @@ declare(strict_types = 1);
 
 namespace Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\Controller;
 
-use ArrayObject;
 use Jalismrs\Symfony\Bundle\JalismrsApiMiddlewareBundle\IsApiControllerInterface;
+use Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\UserControllerService;
 use Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\IsAuthenticatedControllerInterface;
-use Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService;
 use Jalismrs\Symfony\Common\ControllerAbstract;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,21 +22,23 @@ final class UserController extends
     IsApiControllerInterface
 {
     /**
-     * userService
+     * controllerService
      *
-     * @var \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService
+     * @var \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\UserControllerService
      */
-    private UserService $userService;
+    private UserControllerService $controllerService;
     
     /**
      * UserController constructor.
      *
-     * @param \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService $userService
+     * @param \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\UserControllerService $userControllerService
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(
-        UserService $userService
+        UserControllerService $userControllerService
     ) {
-        $this->userService = $userService;
+        $this->controllerService = $userControllerService;
     }
     
     /**
@@ -49,19 +50,12 @@ final class UserController extends
      *
      * @throws \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\StalactiteException
      * @throws \Psr\SimpleCache\InvalidArgumentException
-     * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      * @throws \UnexpectedValueException
      */
     public function index(
         Request $request
     ) : JsonResponse {
-        $user = $this->userService->getUser();
-        
-        $data = new ArrayObject(
-            [
-                'user' => $user,
-            ]
-        );
+        $data = $this->controllerService->index();
         
         return $this->returnJson(
             $request,

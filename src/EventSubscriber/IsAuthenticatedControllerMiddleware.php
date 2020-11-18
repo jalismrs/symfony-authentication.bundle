@@ -33,6 +33,8 @@ final class IsAuthenticatedControllerMiddleware implements
      * IsAuthenticatedControllerMiddleware constructor.
      *
      * @param \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService $userService
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(
         UserService $userService

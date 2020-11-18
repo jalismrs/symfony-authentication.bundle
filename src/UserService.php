@@ -4,10 +4,7 @@ declare(strict_types = 1);
 namespace Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle;
 
 use Jalismrs\Stalactite\Client\Data\Model\User as StalactiteUser;
-use Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\EventSubscriber\GetJwtRequestMiddleware;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use UnexpectedValueException;
-use function vsprintf;
 
 /**
  * Class UserService
@@ -38,6 +35,8 @@ class UserService
      * UserService constructor.
      *
      * @param \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\StalactiteService $stalactiteService
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(
         StalactiteService $stalactiteService
@@ -106,16 +105,6 @@ class UserService
     }
     
     /**
-     * hasJwt
-     *
-     * @return bool
-     */
-    public function hasJwt() : bool
-    {
-        return $this->jwt !== null;
-    }
-    
-    /**
      * setJwt
      *
      * @param string $jwt
@@ -129,39 +118,25 @@ class UserService
     }
     
     /**
+     * hasJwt
+     *
+     * @return bool
+     */
+    public function hasJwt() : bool
+    {
+        return $this->jwt !== null;
+    }
+    
+    /**
      * getUser
      *
      * @return \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\User
      *
      * @throws \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\StalactiteException
      * @throws \Psr\SimpleCache\InvalidArgumentException
-     * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      * @throws \UnexpectedValueException
      */
     public function getUser() : User
-    {
-        $user = $this->fetchUser();
-        
-        if (!$user instanceof User) {
-            throw new UnauthorizedHttpException(
-                '',
-                'you are not connected'
-            );
-        }
-        
-        return $user;
-    }
-    
-    /**
-     * fetchUser
-     *
-     * @return \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\User|null
-     *
-     * @throws \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\StalactiteException
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     * @throws \UnexpectedValueException
-     */
-    public function fetchUser() : ?User
     {
         if ($this->user === null) {
             $jwt = $this->getJwt();
@@ -187,8 +162,7 @@ class UserService
      */
     protected function fetchStalactiteUser(
         string $jwt
-    ) : StalactiteUser
-    {
+    ) : StalactiteUser {
         $stalactiteUser  = $this->stalactiteService->getUser($jwt);
         $stalactiteLeads = $this->stalactiteService->getLeads($jwt);
         $stalactitePosts = $this->stalactiteService->getPosts($jwt);

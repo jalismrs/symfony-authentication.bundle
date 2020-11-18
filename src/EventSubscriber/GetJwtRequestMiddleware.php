@@ -29,6 +29,8 @@ final class GetJwtRequestMiddleware implements
      * GetJwtRequestMiddleware constructor.
      *
      * @param \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService $userService
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(
         UserService $userService

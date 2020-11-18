@@ -3,13 +3,10 @@ services:
         autowire: true
         autoconfigure: true
     
-    # aliases
-    Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService: '@jalismrs_authentication.user_service'
-    
     # controllers
     jalismrs_authentication.authentication_controller:
         arguments:
-            $userService: '@jalismrs_authentication.user_service'
+            $userService: '@jalismrs_authentication.authentication_controller_service'
         calls:
             - setContainer:
                   $container: '@Psr\Container\ContainerInterface'
@@ -19,13 +16,24 @@ services:
 
     jalismrs_authentication.user_controller:
         arguments:
-            $userService: '@jalismrs_authentication.user_service'
+            $userService: '@jalismrs_authentication.user_controller_service'
         calls:
             - setContainer:
                   $container: '@Psr\Container\ContainerInterface'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\Controller\UserController'
         tags:
             - name: 'controller.service_arguments'
+    
+    # controllers
+    jalismrs_authentication.authentication_controller_service:
+        arguments:
+            $userService: '@jalismrs_authentication.user_service'
+        class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\AuthenticationControllerService'
+
+    jalismrs_authentication.user_controller_service:
+        arguments:
+            $userService: '@jalismrs_authentication.user_service'
+        class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\UserControllerService'
 
     # event-subscribers
     jalismrs_authentication.get_jwt_request_middleware:
@@ -43,7 +51,7 @@ services:
             $service: '@Jalismrs\Stalactite\Client\Service'
         tags:
             - name: 'monolog.logger'
-              channel: 'authentication'
+              channel: 'stalactite'
             
     jalismrs_authentication.user_service:
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService'

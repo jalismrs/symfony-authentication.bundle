@@ -19,7 +19,7 @@ use function is_string;
 /**
  * Class StalactiteService
  *
- * @package App\Auth
+ * @package Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle
  */
 class StalactiteService
 {
@@ -57,6 +57,8 @@ class StalactiteService
      * @param \Psr\Log\LoggerInterface                                   $logger
      * @param \Lcobucci\JWT\Parser                                       $parser
      * @param \Jalismrs\Stalactite\Client\Service                        $service
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(
         ClientApp $clientApp,
@@ -144,7 +146,7 @@ class StalactiteService
         $body = $response->getBody();
     
         if ($body instanceof ApiError) {
-            $error = $body;
+            $error = $body->getMessage();
         } elseif (is_string($body)) {
             $error = $body;
         } else {

@@ -4,14 +4,11 @@ declare(strict_types = 1);
 
 namespace Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\Controller;
 
-use ArrayObject;
 use Jalismrs\Symfony\Bundle\JalismrsApiMiddlewareBundle\IsApiControllerInterface;
-use Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService;
+use Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\AuthenticationControllerService;
 use Jalismrs\Symfony\Common\ControllerAbstract;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use function vsprintf;
 
 /**
  * Class AuthenticationController
@@ -22,24 +19,24 @@ final class AuthenticationController extends
     ControllerAbstract implements
     IsApiControllerInterface
 {
-    public const REQUEST_PARAMETER = 'externalUserJwt';
-    
     /**
-     * userService
+     * controllerService
      *
-     * @var \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService
+     * @var \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\AuthenticationControllerService
      */
-    private UserService $userService;
+    private AuthenticationControllerService $controllerService;
     
     /**
      * AuthenticationController constructor.
      *
-     * @param \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService $userService
+     * @param \Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\AuthenticationControllerService $authenticationControllerService
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(
-        UserService $userService
+        AuthenticationControllerService $authenticationControllerService
     ) {
-        $this->userService = $userService;
+        $this->controllerService = $authenticationControllerService;
     }
     
     /**
@@ -56,28 +53,7 @@ final class AuthenticationController extends
     public function index(
         Request $request
     ) : JsonResponse {
-        $externalUserJwt = $request->request->get(self::REQUEST_PARAMETER);
-        
-        if ($externalUserJwt === null) {
-            $message = vsprintf(
-                'Missing required POST parameter: %s',
-                [
-                    self::REQUEST_PARAMETER,
-                ]
-            );
-            
-            throw new BadRequestHttpException(
-                $message,
-            );
-        }
-        
-        $stalactiteJwt = $this->userService->login($externalUserJwt);
-        
-        $data = new ArrayObject(
-            [
-                'jwt' => $stalactiteJwt,
-            ]
-        );
+        $data = $this->controllerService->index($request);
         
         return $this->returnJson(
             $request,
