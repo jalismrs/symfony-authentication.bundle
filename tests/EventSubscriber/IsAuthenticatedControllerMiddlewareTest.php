@@ -50,7 +50,6 @@ final class IsAuthenticatedControllerMiddlewareTest extends
         // arrange
         $systemUnderTest = $this->createSUT();
         
-        $jwt            = 'JWT';
         $mockHttpKernel = $this->createMock(HttpKernelInterface::class);
         $testRequest    = new Request();
         

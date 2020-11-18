@@ -22,7 +22,7 @@ final class UserControllerServiceTest extends
     /**
      * mockUserService
      *
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Jalismrs\Symfony\Bundle\JalismrsUserBundle\UserService\UserUserService
+     * @var \PHPUnit\Framework\MockObject\MockObject|\Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService
      */
     private MockObject $mockUserService;
     
