@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @package Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\Controller
  */
-final class AuthenticationController extends
+class AuthenticationController extends
     ControllerAbstract implements
     IsApiControllerInterface
 {

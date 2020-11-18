@@ -12,7 +12,7 @@ use Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService;
  *
  * @package Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService
  */
-final class UserControllerService
+class UserControllerService
 {
     /**
      * userService

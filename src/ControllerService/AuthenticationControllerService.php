@@ -15,7 +15,7 @@ use function vsprintf;
  *
  * @package Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService
  */
-final class AuthenticationControllerService
+class AuthenticationControllerService
 {
     public const REQUEST_PARAMETER = 'externalUserJwt';
     
