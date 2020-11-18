@@ -24,7 +24,7 @@ services:
         tags:
             -   name: 'controller.service_arguments'
     
-    # controllers
+    # controller-services
     jalismrs_authentication.authentication_controller_service:
         arguments:
             $userService: '@jalismrs_authentication.user_service'
