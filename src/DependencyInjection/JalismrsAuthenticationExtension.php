@@ -43,15 +43,13 @@ class JalismrsAuthenticationExtension extends
         
         $yamlFileLoader->load('services.yaml');
         
-        $definition = $container->getDefinition(Client::class);
+        $definition = $container->getDefinition(Configuration::CONFIG_ROOT . '.dependency.jalismrs.stalactite_api_client.client');
         $definition->replaceArgument(
             '$host',
             $mergedConfig['url']
         );
         
-        $definition = $container->getDefinition(ClientApp::class);
-        
-        $definition->removeMethodCall('setName');
+        $definition = $container->getDefinition(Configuration::CONFIG_ROOT . '.dependency.jalismrs.stalactite_api_client.client_app');
         $definition->addMethodCall(
             'setName',
             [

@@ -1,4 +1,4 @@
-# symfony.bundle.api.salesforce
+# symfony.bundle.authentication
 
 Adds User, its services, its routes and a protected controller interface with its middleware
 

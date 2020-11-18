@@ -4,9 +4,9 @@ services:
         autoconfigure: true
     
     # controllers
-    jalismrs_authentication.authentication_controller:
+    jalismrs_authentication.controller.authentication_controller:
         arguments:
-            $controllerService: '@jalismrs_authentication.authentication_controller_service'
+            $controllerService: '@jalismrs_authentication.controller_service.authentication_controller_service'
         calls:
             -   setContainer:
                     $container: '@Psr\Container\ContainerInterface'
@@ -14,9 +14,9 @@ services:
         tags:
             -   name: 'controller.service_arguments'
     
-    jalismrs_authentication.user_controller:
+    jalismrs_authentication.controller.user_controller:
         arguments:
-            $controllerService: '@jalismrs_authentication.user_controller_service'
+            $controllerService: '@jalismrs_authentication.controller_service.user_controller_service'
         calls:
             -   setContainer:
                     $container: '@Psr\Container\ContainerInterface'
@@ -24,24 +24,24 @@ services:
         tags:
             -   name: 'controller.service_arguments'
     
-    # controllers
-    jalismrs_authentication.authentication_controller_service:
+    # controller-services
+    jalismrs_authentication.controller_service.authentication_controller_service:
         arguments:
             $userService: '@jalismrs_authentication.user_service'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\AuthenticationControllerService'
     
-    jalismrs_authentication.user_controller_service:
+    jalismrs_authentication.controller_service.user_controller_service:
         arguments:
             $userService: '@jalismrs_authentication.user_service'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\UserControllerService'
     
     # event-subscribers
-    jalismrs_authentication.get_jwt_request_middleware:
+    jalismrs_authentication.event_subscriber.get_jwt_request_middleware:
         arguments:
             $userService: '@jalismrs_authentication.user_service'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\EventSubscriber\GetJwtRequestMiddleware'
     
-    jalismrs_authentication.is_authenticated_controller_middleware:
+    jalismrs_authentication.event_subscriber.is_authenticated_controller_middleware:
         arguments:
             $userService: '@jalismrs_authentication.user_service'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\EventSubscriber\IsAuthenticatedControllerMiddleware'
@@ -50,9 +50,9 @@ services:
     jalismrs_authentication.stalactite_service:
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\StalactiteService'
         arguments:
-            $clientApp: '@Jalismrs\Stalactite\Client\Authentication\Model\ClientApp'
-            $parser: '@Lcobucci\JWT\Parser'
-            $service: '@Jalismrs\Stalactite\Client\Service'
+            $clientApp: '@jalismrs_authentication.dependency.jalismrs.stalactite_api_client.client_app'
+            $parser: '@jalismrs_authentication.dependency.lcobucci.jwt.parser'
+            $service: '@jalismrs_authentication.dependency.jalismrs.stalactite_api_client.service'
         tags:
             -   name: 'monolog.logger'
                 channel: 'stalactite'
@@ -64,17 +64,17 @@ services:
     
     # DEPENDENCIES -------------------------------------------------------------
     # jalismrs/stalactite-api.client
-    Jalismrs\Stalactite\Client\Client:
+    jalismrs_authentication.dependency.jalismrs.stalactite_api_client.client:
         arguments:
             $host: '%jalismrs_authentication.url%'
-    Jalismrs\Stalactite\Client\Service:
+        class: 'Jalismrs\Stalactite\Client\Client'
+    jalismrs_authentication.dependency.jalismrs.stalactite_api_client.service:
         arguments:
-            $client: '@Jalismrs\Stalactite\Client\Client'
-    Jalismrs\Stalactite\Client\Authentication\Model\ClientApp:
-        calls:
-            -   setName:
-                    $name: '%jalismrs_authentication.application%'
+            $client: '@jalismrs_authentication.dependency.jalismrs.stalactite_api_client.client'
+        class: 'Jalismrs\Stalactite\Client\Service'
+    jalismrs_authentication.dependency.jalismrs.stalactite_api_client.client_app:
+        class: 'Jalismrs\Stalactite\Client\Authentication\Model\ClientApp'
     
     # lcobucci/jwt
-    Lcobucci\JWT\Parser:
-        autowire: true
+    jalismrs_authentication.dependency.lcobucci.jwt.parser:
+        class: 'Lcobucci\JWT\Parser'
