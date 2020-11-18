@@ -8,33 +8,33 @@ services:
         arguments:
             $controllerService: '@jalismrs_authentication.authentication_controller_service'
         calls:
-            - setContainer:
-                  $container: '@Psr\Container\ContainerInterface'
+            -   setContainer:
+                    $container: '@Psr\Container\ContainerInterface'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\Controller\AuthenticationController'
         tags:
-            - name: 'controller.service_arguments'
-
+            -   name: 'controller.service_arguments'
+    
     jalismrs_authentication.user_controller:
         arguments:
             $controllerService: '@jalismrs_authentication.user_controller_service'
         calls:
-            - setContainer:
-                  $container: '@Psr\Container\ContainerInterface'
+            -   setContainer:
+                    $container: '@Psr\Container\ContainerInterface'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\Controller\UserController'
         tags:
-            - name: 'controller.service_arguments'
+            -   name: 'controller.service_arguments'
     
     # controllers
     jalismrs_authentication.authentication_controller_service:
         arguments:
             $userService: '@jalismrs_authentication.user_service'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\AuthenticationControllerService'
-
+    
     jalismrs_authentication.user_controller_service:
         arguments:
             $userService: '@jalismrs_authentication.user_service'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\ControllerService\UserControllerService'
-
+    
     # event-subscribers
     jalismrs_authentication.get_jwt_request_middleware:
         arguments:
@@ -54,14 +54,14 @@ services:
             $parser: '@Lcobucci\JWT\Parser'
             $service: '@Jalismrs\Stalactite\Client\Service'
         tags:
-            - name: 'monolog.logger'
-              channel: 'stalactite'
-            
+            -   name: 'monolog.logger'
+                channel: 'stalactite'
+    
     jalismrs_authentication.user_service:
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\UserService'
         arguments:
             $stalactiteService: '@jalismrs_authentication.stalactite_service'
-
+    
     # DEPENDENCIES -------------------------------------------------------------
     # jalismrs/stalactite-api.client
     Jalismrs\Stalactite\Client\Client:
@@ -72,8 +72,8 @@ services:
             $client: '@Jalismrs\Stalactite\Client\Client'
     Jalismrs\Stalactite\Client\Authentication\Model\ClientApp:
         calls:
-            - setName:
-                $name: '%jalismrs_authentication.application%'
+            -   setName:
+                    $name: '%jalismrs_authentication.application%'
     
     # lcobucci/jwt
     Lcobucci\JWT\Parser:
