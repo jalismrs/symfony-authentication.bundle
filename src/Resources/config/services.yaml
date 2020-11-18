@@ -37,9 +37,13 @@ services:
 
     # event-subscribers
     jalismrs_authentication.get_jwt_request_middleware:
+        arguments:
+            $userService: '@jalismrs_authentication.user_service'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\EventSubscriber\GetJwtRequestMiddleware'
-
+    
     jalismrs_authentication.is_authenticated_controller_middleware:
+        arguments:
+            $userService: '@jalismrs_authentication.user_service'
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\EventSubscriber\IsAuthenticatedControllerMiddleware'
     
     # services
