@@ -50,9 +50,9 @@ services:
     jalismrs_authentication.stalactite_service:
         class: 'Jalismrs\Symfony\Bundle\JalismrsAuthenticationBundle\StalactiteService'
         arguments:
-            $clientApp: '@Jalismrs\Stalactite\Client\Authentication\Model\ClientApp'
-            $parser: '@Lcobucci\JWT\Parser'
-            $service: '@Jalismrs\Stalactite\Client\Service'
+            $clientApp: '@jalismrs_authentication.dependency.jalismrs.stalactite_api_client.client_app'
+            $parser: '@jalismrs_authentication.dependency.lcobucci.jwt.parser'
+            $service: '@jalismrs_authentication.dependency.jalismrs.stalactite_api_client.service'
         tags:
             -   name: 'monolog.logger'
                 channel: 'stalactite'
@@ -64,17 +64,17 @@ services:
     
     # DEPENDENCIES -------------------------------------------------------------
     # jalismrs/stalactite-api.client
-    Jalismrs\Stalactite\Client\Client:
+    jalismrs_authentication.dependency.jalismrs.stalactite_api_client.client:
         arguments:
             $host: '%jalismrs_authentication.url%'
-    Jalismrs\Stalactite\Client\Service:
+        class: 'Jalismrs\Stalactite\Client\Client'
+    jalismrs_authentication.dependency.jalismrs.stalactite_api_client.service:
         arguments:
-            $client: '@Jalismrs\Stalactite\Client\Client'
-    Jalismrs\Stalactite\Client\Authentication\Model\ClientApp:
-        calls:
-            -   setName:
-                    $name: '%jalismrs_authentication.application%'
+            $client: '@jalismrs_authentication.dependency.jalismrs.stalactite_api_client.client'
+        class: 'Jalismrs\Stalactite\Client\Service'
+    jalismrs_authentication.dependency.jalismrs.stalactite_api_client.client_app:
+        class: 'Jalismrs\Stalactite\Client\Authentication\Model\ClientApp'
     
     # lcobucci/jwt
-    Lcobucci\JWT\Parser:
-        autowire: true
+    jalismrs_authentication.dependency.lcobucci.jwt.parser:
+        class: 'Lcobucci\JWT\Parser'
