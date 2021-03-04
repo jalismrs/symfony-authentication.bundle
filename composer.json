@@ -28,7 +28,7 @@
     "roave/security-advisories" : "dev-master"
   },
   "require" : {
-    "php" : "^7.4",
+    "php" : "^7.4 || ^8.0",
     "jalismrs/stalactite-api.client" : "^0.12.2",
     "jalismrs/symfony.bundle.middleware.api" : "^1.0.0",
     "jalismrs/symfony.common.controller" : "^1.0.0",
